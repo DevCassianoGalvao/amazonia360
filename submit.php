@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/NotificationService.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -8,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$nome      = trim($_POST['nome']      ?? '');
-$nota      = intval($_POST['nota']    ?? -1);
-$comentario= trim($_POST['comentario']?? '');
+$nome       = trim($_POST['nome']       ?? '');
+$nota       = intval($_POST['nota']     ?? -1);
+$comentario = trim($_POST['comentario'] ?? '');
 
-if ($nota < 0 || $nota > 10) {
+if ($nota < 1 || $nota > 10) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'Nota inválida.']);
     exit;
@@ -25,10 +26,25 @@ try {
         VALUES (:nome, :nota, :comentario)
     ");
     $stmt->execute([
-        ':nome'      => mb_substr($nome, 0, 100),
-        ':nota'      => $nota,
-        ':comentario'=> mb_substr($comentario, 0, 2000),
+        ':nome'       => mb_substr($nome, 0, 100),
+        ':nota'       => $nota,
+        ':comentario' => mb_substr($comentario, 0, 2000),
     ]);
+
+    $id      = db()->lastInsertId();
+    $review  = db()->query("SELECT * FROM `$t` WHERE id = $id")->fetch();
+
+    if ($review) {
+        $config = [
+            'brevo_enabled'      => filter_var($_ENV['BREVO_ENABLED'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'brevo_api_key'      => $_ENV['BREVO_API_KEY']       ?? '',
+            'brevo_from_email'   => $_ENV['BREVO_FROM_EMAIL']    ?? '',
+            'brevo_from_name'    => $_ENV['BREVO_FROM_NAME']     ?? 'Amazônia 360',
+            'notification_email' => $_ENV['NOTIFICATION_EMAIL']  ?? '',
+        ];
+        (new NotificationService($config))->notifyNewReview($review);
+    }
+
     echo json_encode(['ok' => true]);
 } catch (PDOException $e) {
     http_response_code(500);
