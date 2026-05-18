@@ -98,7 +98,7 @@ function format_date(string $dt): string {
       </div>
 
       <div class="field">
-        <label for="nomeInput">Seu nome</label>
+        <label for="nomeInput">Seu nome <span class="label-optional">Não é obrigatório</span></label>
         <input type="text" id="nomeInput" name="nome" placeholder="Como podemos te chamar?" maxlength="100" />
       </div>
 

@@ -241,6 +241,15 @@ textarea {
   resize: none;
 }
 
+.label-optional {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  text-transform: none;
+  color: #484848;
+  margin-left: 6px;
+}
+
 input[type="text"]::placeholder,
 textarea::placeholder { color: #3a3a3a; }
 
