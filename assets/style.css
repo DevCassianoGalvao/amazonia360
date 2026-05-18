@@ -170,7 +170,7 @@ body {
 
 .nps-grid {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   gap: 6px;
   margin-bottom: 10px;
 }
