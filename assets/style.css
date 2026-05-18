@@ -222,7 +222,7 @@ label {
   font-weight: 700;
   letter-spacing: .09em;
   text-transform: uppercase;
-  color: var(--gray);
+  color: var(--white);
   margin-bottom: 10px;
 }
 
@@ -258,7 +258,7 @@ textarea {
 }
 
 input[type="text"]::placeholder,
-textarea::placeholder { color: #3a3a3a; }
+textarea::placeholder { color: #888888; }
 
 input[type="text"]:focus,
 textarea:focus {
