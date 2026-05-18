@@ -98,13 +98,14 @@ function format_date(string $dt): string {
       </div>
 
       <div class="field">
-        <label for="nomeInput">Seu nome <span class="label-optional">(NÃO É OBRIGATÓRIO)</span></label>
-        <input type="text" id="nomeInput" name="nome" placeholder="Como podemos te chamar?" maxlength="100" />
+        <label for="comentarioInput">Comentário livre</label>
+        <textarea id="comentarioInput" name="comentario" placeholder="Conte o que achou, o que mais gostou ou o que podemos melhorar…"></textarea>
       </div>
 
       <div class="field">
-        <label for="comentarioInput">Comentário livre</label>
-        <textarea id="comentarioInput" name="comentario" placeholder="Conte o que achou, o que mais gostou ou o que podemos melhorar…"></textarea>
+        <label for="nomeInput">Seu nome</label>
+        <p class="field-hint">Entraremos em contato caso deseje.</p>
+        <input type="text" id="nomeInput" name="nome" placeholder="Como podemos te chamar?" maxlength="100" />
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn" disabled>

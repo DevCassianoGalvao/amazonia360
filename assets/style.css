@@ -241,12 +241,12 @@ textarea {
   resize: none;
 }
 
-.label-optional {
-  font-size: 11px;
+.field-hint {
+  font-size: 12px;
   font-weight: 400;
-  letter-spacing: .04em;
-  color: var(--white);
-  margin-left: 6px;
+  color: var(--gray);
+  margin-bottom: 10px;
+  margin-top: -6px;
 }
 
 input[type="text"]::placeholder,
