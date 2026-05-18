@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $nome       = trim($_POST['nome']       ?? '');
+$telefone   = trim($_POST['telefone']   ?? '');
 $nota       = intval($_POST['nota']     ?? -1);
 $comentario = trim($_POST['comentario'] ?? '');
 
@@ -22,11 +23,12 @@ if ($nota < 1 || $nota > 10) {
 try {
     $t = table();
     $stmt = db()->prepare("
-        INSERT INTO `$t` (nome, nota, comentario)
-        VALUES (:nome, :nota, :comentario)
+        INSERT INTO `$t` (nome, telefone, nota, comentario)
+        VALUES (:nome, :telefone, :nota, :comentario)
     ");
     $stmt->execute([
         ':nome'       => mb_substr($nome, 0, 100),
+        ':telefone'   => mb_substr($telefone, 0, 20),
         ':nota'       => $nota,
         ':comentario' => mb_substr($comentario, 0, 2000),
     ]);

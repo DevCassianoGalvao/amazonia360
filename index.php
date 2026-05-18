@@ -101,9 +101,17 @@ function format_date(string $dt): string {
       </div>
 
       <div class="field">
-        <label for="nomeInput">Identificação <span class="label-optional">(OPCIONAL)</span></label>
         <p class="field-hint">Esta pesquisa é anônima. Porém, se você teve algum problema e deseja que nossa diretoria entre em contato para resolver, deixe seu nome e telefone.</p>
-        <input type="text" id="nomeInput" name="nome" placeholder="Nome e telefone" maxlength="100" />
+        <div class="field-row">
+          <div class="field-col">
+            <label for="nomeInput">Nome</label>
+            <input type="text" id="nomeInput" name="nome" placeholder="Seu nome" maxlength="100" />
+          </div>
+          <div class="field-col">
+            <label for="telefoneInput">Telefone</label>
+            <input type="tel" id="telefoneInput" name="telefone" placeholder="(00) 00000-0000" maxlength="15" />
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn" disabled>

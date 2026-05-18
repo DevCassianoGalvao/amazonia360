@@ -22,11 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.appendChild(btn);
   }
 
+  // Phone mask
+  const telefoneInput = document.getElementById('telefoneInput');
+  if (telefoneInput) {
+    telefoneInput.addEventListener('input', () => {
+      let v = telefoneInput.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 10) {
+        v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      } else if (v.length > 6) {
+        v = v.replace(/^(\d{2})(\d{4})(\d*)$/, '($1) $2-$3');
+      } else if (v.length > 2) {
+        v = v.replace(/^(\d{2})(\d*)$/, '($1) $2');
+      } else if (v.length > 0) {
+        v = v.replace(/^(\d*)$/, '($1');
+      }
+      telefoneInput.value = v;
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     feedback.className = 'form-feedback';
 
     const nome       = document.getElementById('nomeInput').value.trim();
+    const telefone   = document.getElementById('telefoneInput').value.trim();
     const comentario = document.getElementById('comentarioInput').value.trim();
 
     if (selectedScore === null) return;
@@ -37,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = new FormData();
     body.append('nota',       selectedScore);
     body.append('nome',       nome);
+    body.append('telefone',   telefone);
     body.append('comentario', comentario);
 
     try {

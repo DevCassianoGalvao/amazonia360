@@ -25,12 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 CREATE TABLE IF NOT EXISTS `$t` (
                     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     nome        VARCHAR(100)     NOT NULL DEFAULT '',
+                    telefone    VARCHAR(20)      NOT NULL DEFAULT '',
                     nota        TINYINT UNSIGNED NOT NULL,
                     comentario  TEXT             NOT NULL DEFAULT '',
                     criado_em   DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
-            $message = "Tabela `$t` criada (ou já existente). Instalação concluída!";
+            db()->exec("
+                ALTER TABLE `$t`
+                ADD COLUMN IF NOT EXISTS telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome;
+            ");
+            $message = "Tabela `$t` criada/atualizada. Instalação concluída!";
             $success = true;
         } catch (PDOException $e) {
             $message = 'Erro ao criar tabela: ' . htmlspecialchars($e->getMessage());

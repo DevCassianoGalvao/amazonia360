@@ -216,6 +216,16 @@ body {
 /* ── Inputs ── */
 .field { margin-bottom: 20px; }
 
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; }
+}
+
 label {
   display: block;
   font-size: 14px;

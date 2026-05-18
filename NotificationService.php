@@ -44,12 +44,13 @@ class NotificationService {
         $nota  = (int) $r['nota'];
         $emoji = $nota >= 9 ? '🟢' : ($nota >= 7 ? '🟡' : '🔴');
         $nome  = $r['nome'] !== '' ? $r['nome'] : 'Anônimo';
-        return "$emoji Nova avaliação NPS: nota $nota — $nome";
+        return "$emoji Nova avaliação NPS: nota $nota/10 — $nome";
     }
 
     private function html(array $r): string {
         $nota      = (int) $r['nota'];
-        $nome      = htmlspecialchars($r['nome'] !== '' ? $r['nome'] : 'Anônimo');
+        $nome      = htmlspecialchars($r['nome'] !== '' ? $r['nome'] : '');
+        $telefone  = htmlspecialchars($r['telefone'] ?? '');
         $comentario= nl2br(htmlspecialchars($r['comentario']));
         $data      = (new DateTime($r['criado_em']))->format('d/m/Y \à\s H\hi');
 
@@ -60,7 +61,20 @@ class NotificationService {
         $comentarioBlocos = $r['comentario'] !== ''
             ? "<p style='margin:0 0 8px 0;color:#888;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Sugestão / Crítica</p>
                <p style='margin:0;color:#ccc;font-size:15px;line-height:1.7;'>\"{$comentario}\"</p>"
-            : "<p style='color:#666;font-size:14px;font-style:italic;'>Nenhum comentário.</p>";
+            : '';
+
+        $contatoBlocos = ($nome !== '' || $telefone !== '')
+            ? "<tr>
+                <td style='padding-bottom:16px;'>
+                  <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Nome</p>
+                  <p style='margin:0;color:#f5f5f0;font-size:16px;font-weight:600;'>" . ($nome ?: '—') . "</p>
+                </td>
+                <td style='padding-bottom:16px;text-align:right;'>
+                  <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Telefone</p>
+                  <p style='margin:0;color:#f5f5f0;font-size:15px;'>" . ($telefone ?: '—') . "</p>
+                </td>
+              </tr>"
+            : "<tr><td colspan='2' style='padding-bottom:16px;color:#666;font-size:14px;font-style:italic;'>Avaliação anônima — sem contato informado.</td></tr>";
 
         return "
         <!DOCTYPE html>
@@ -100,20 +114,15 @@ class NotificationService {
                 <tr>
                   <td style='padding:24px 36px;'>
                     <table width='100%' cellpadding='0' cellspacing='0' style='border-top:1px solid #222;padding-top:24px;'>
+                      {$contatoBlocos}
                       <tr>
-                        <td style='padding-bottom:16px;'>
-                          <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Identificação</p>
-                          <p style='margin:0;color:#f5f5f0;font-size:16px;font-weight:600;'>{$nome}</p>
-                        </td>
-                        <td style='padding-bottom:16px;text-align:right;'>
+                        <td colspan='2' style='padding-bottom:16px;text-align:right;'>
                           <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Data</p>
                           <p style='margin:0;color:#f5f5f0;font-size:15px;'>{$data}</p>
                         </td>
                       </tr>
                     </table>
-                    <div style='border-top:1px solid #222;padding-top:20px;'>
-                      {$comentarioBlocos}
-                    </div>
+                    " . ($comentarioBlocos ? "<div style='border-top:1px solid #222;padding-top:20px;'>{$comentarioBlocos}</div>" : '') . "
                   </td>
                 </tr>
 
@@ -132,19 +141,21 @@ class NotificationService {
     }
 
     private function text(array $r): string {
-        $nota  = (int) $r['nota'];
-        $nome  = $r['nome'] !== '' ? $r['nome'] : 'Anônimo';
-        $data  = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
-        $linhas = [
+        $nota     = (int) $r['nota'];
+        $nome     = $r['nome']     !== '' ? $r['nome']     : 'Não informado';
+        $telefone = ($r['telefone'] ?? '') !== '' ? $r['telefone'] : 'Não informado';
+        $data     = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
+        $linhas   = [
             "Nova avaliação NPS — Amazônia 360",
             "---",
             "Nota: $nota/10",
             "Nome: $nome",
+            "Telefone: $telefone",
             "Data: $data",
         ];
         if ($r['comentario'] !== '') {
             $linhas[] = "---";
-            $linhas[] = "Comentário:";
+            $linhas[] = "Sugestão/Crítica:";
             $linhas[] = $r['comentario'];
         }
         return implode("\n", $linhas);
