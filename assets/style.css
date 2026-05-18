@@ -208,9 +208,19 @@ body {
 .nps-hints {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
   font-size: 13px;
   color: var(--gray);
   margin-bottom: 32px;
+}
+
+.nps-hints span {
+  max-width: 48%;
+}
+
+.nps-hints span:last-child {
+  text-align: right;
 }
 
 /* ── Inputs ── */
@@ -317,12 +327,62 @@ textarea { height: 110px; line-height: 1.6; }
 .form-feedback.err { display: block; background: rgba(180,40,40,.15); border: 1px solid #7a2d2d; color: #f08080; }
 
 /* ── Responsive ── */
-@media (max-width: 560px) {
-  .form-card { padding: 32px 20px; }
-  .form-title { font-size: 20px; }
+
+/* Tablet */
+@media (max-width: 640px) {
+  body { padding: 28px 14px 60px; }
+
+  .site-header { margin-bottom: 36px; }
+  .site-header img { height: 80px; }
+
+  .form-card { padding: 32px 22px; }
+  .form-title { font-size: 22px; }
+  .form-sub  { font-size: 15px; }
+
+  .nps-btn { font-size: 14px; border-radius: 8px; }
+
+  .review-card {
+    grid-template-columns: auto 1fr;
+    padding: 18px 20px;
+  }
+  .review-date    { grid-column: 2; white-space: normal; }
+  .review-comment { grid-column: 1 / 3; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body { padding: 20px 12px 48px; }
+
+  .site-header img { height: 64px; }
+  .site-header { margin-bottom: 28px; }
+
+  .section-title { font-size: 13px; }
+
+  .form-card { padding: 26px 16px; }
+  .form-title { font-size: 19px; }
+
   .nps-grid { gap: 4px; }
-  .nps-btn { font-size: 12px; border-radius: 8px; }
-  .review-card { grid-template-columns: auto 1fr; }
-  .review-date { grid-column: 2; }
-  .review-comment { grid-column: 2 / 3; }
+  .nps-btn  { font-size: 13px; border-radius: 7px; }
+  .nps-hints { font-size: 11px; }
+
+  .review-name    { font-size: 15px; }
+  .review-date    { font-size: 12px; }
+  .review-comment { font-size: 14px; }
+
+  label           { font-size: 13px; }
+  .field-hint     { font-size: 13px; }
+  .field-row      { grid-template-columns: 1fr; }
+
+  input[type="text"],
+  input[type="tel"],
+  textarea        { font-size: 16px; padding: 13px 16px; }
+
+  .submit-btn     { font-size: 15px; padding: 15px; }
+}
+
+/* Mobile pequeno */
+@media (max-width: 360px) {
+  .form-title { font-size: 17px; }
+  .nps-btn    { font-size: 11px; border-radius: 6px; }
+  .nps-grid   { gap: 3px; }
 }
