@@ -44,11 +44,7 @@ function format_date(string $dt): string {
 
   <!-- Logo -->
   <header class="site-header">
-    <img
-      src="logo.png"
-      alt="Amazônia 360"
-      onerror="this.outerHTML='<span class=\'wordmark\'>Amazônia 360</span>'"
-    />
+    <img src="assets/logo amazonia360.png" alt="Amazônia 360" />
   </header>
 
   <!-- Reviews -->
