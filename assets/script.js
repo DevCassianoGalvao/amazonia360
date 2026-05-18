@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let selectedScore = null;
 
-  // Build 0–10 buttons
-  for (let i = 0; i <= 10; i++) {
+  // Build 1–10 buttons
+  for (let i = 1; i <= 10; i++) {
     const btn = document.createElement('button');
     btn.type      = 'button';
     btn.className = 'nps-btn';

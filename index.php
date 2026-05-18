@@ -85,27 +85,25 @@ function format_date(string $dt): string {
   <p class="section-title">Deixe sua avaliação</p>
 
   <div class="form-card">
-    <h1 class="form-title">Como foi sua experiência na&nbsp;Amazônia&nbsp;360?</h1>
-    <p class="form-sub">Sua avaliação nos ajuda a melhorar. Leva menos de 1 minuto.</p>
+    <h1 class="form-title">Em uma escala de 1 a 10, como você avalia o atendimento que recebeu hoje?</h1>
 
     <form id="npsForm" novalidate>
 
-      <p class="nps-label">Qual a probabilidade de você nos recomendar?</p>
       <div class="nps-grid" id="npsGrid"></div>
       <div class="nps-hints">
-        <span>Não recomendaria</span>
-        <span>Recomendaria com certeza</span>
+        <span>Muito insatisfeito</span>
+        <span>Muito satisfeito</span>
       </div>
 
       <div class="field">
-        <label for="comentarioInput">Comentário livre</label>
-        <textarea id="comentarioInput" name="comentario" placeholder="Conte o que achou, o que mais gostou ou o que podemos melhorar…"></textarea>
+        <label for="comentarioInput">Sugestão / Crítica</label>
+        <textarea id="comentarioInput" name="comentario" placeholder="Conta pra gente: faltou algum produto que você procurava ou tem alguma sugestão/crítica para melhorarmos?"></textarea>
       </div>
 
       <div class="field">
-        <label for="nomeInput">Seu nome</label>
-        <p class="field-hint">Entraremos em contato caso deseje.</p>
-        <input type="text" id="nomeInput" name="nome" placeholder="Como podemos te chamar?" maxlength="100" />
+        <label for="nomeInput">Identificação <span class="label-optional">(OPCIONAL)</span></label>
+        <p class="field-hint">Esta pesquisa é anônima. Porém, se você teve algum problema e deseja que nossa diretoria entre em contato para resolver, deixe seu nome e telefone.</p>
+        <input type="text" id="nomeInput" name="nome" placeholder="Nome e telefone" maxlength="100" />
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn" disabled>
