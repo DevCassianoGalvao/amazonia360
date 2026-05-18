@@ -31,10 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     criado_em   DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
-            db()->exec("
-                ALTER TABLE `$t`
-                ADD COLUMN IF NOT EXISTS telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome;
-            ");
+
+            // Adiciona coluna telefone se ainda não existir (compatível com MySQL 5.7)
+            $dbName = $_ENV['DB_NAME'] ?? '';
+            $colExists = db()->query("
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = '$dbName' AND TABLE_NAME = '$t' AND COLUMN_NAME = 'telefone'
+            ")->fetchColumn();
+
+            if (!$colExists) {
+                db()->exec("ALTER TABLE `$t` ADD COLUMN telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome;");
+            }
+
             $message = "Tabela `$t` criada/atualizada. Instalação concluída!";
             $success = true;
         } catch (PDOException $e) {
