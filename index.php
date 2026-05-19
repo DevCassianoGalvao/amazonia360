@@ -1,21 +1,32 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Fetch last 20 reviews
-$reviews = [];
-$dbError = false;
+$reviews  = [];
+$dbError  = false;
+$total    = 0;
+$perPage  = 5;
+$page     = max(1, intval($_GET['page'] ?? 1));
 
 try {
-    $t = table();
-    $stmt = db()->query("
+    $t     = table();
+    $total = (int) db()->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+    $pages = max(1, (int) ceil($total / $perPage));
+    $page  = min($page, $pages);
+    $offset= ($page - 1) * $perPage;
+
+    $stmt = db()->prepare("
         SELECT nome, nota, comentario, criado_em
         FROM `$t`
         ORDER BY criado_em DESC
-        LIMIT 20
+        LIMIT :limit OFFSET :offset
     ");
+    $stmt->bindValue(':limit',  $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset,  PDO::PARAM_INT);
+    $stmt->execute();
     $reviews = $stmt->fetchAll();
 } catch (PDOException $e) {
     $dbError = true;
+    $pages   = 1;
 }
 
 function score_class(int $n): string {
@@ -27,6 +38,10 @@ function score_class(int $n): string {
 function format_date(string $dt): string {
     $d = new DateTime($dt);
     return $d->format('d/m/Y \à\s H\hi');
+}
+
+function pag_url(int $p): string {
+    return '?page=' . $p . '#avaliacoes';
 }
 ?>
 <!DOCTYPE html>
@@ -48,7 +63,7 @@ function format_date(string $dt): string {
   </header>
 
   <!-- Reviews -->
-  <p class="section-title">Últimas avaliações</p>
+  <p class="section-title" id="avaliacoes">Últimas avaliações</p>
 
   <?php if ($dbError): ?>
     <div class="no-reviews">
@@ -79,6 +94,19 @@ function format_date(string $dt): string {
       </div>
       <?php endforeach; ?>
     </div>
+
+    <?php if ($pages > 1): ?>
+    <nav class="pagination">
+      <a class="pag-btn <?= $page <= 1 ? 'disabled' : '' ?>" href="<?= pag_url($page - 1) ?>">&#8592;</a>
+
+      <?php for ($i = 1; $i <= $pages; $i++): ?>
+        <a class="pag-btn <?= $i === $page ? 'active' : '' ?>" href="<?= pag_url($i) ?>"><?= $i ?></a>
+      <?php endfor; ?>
+
+      <a class="pag-btn <?= $page >= $pages ? 'disabled' : '' ?>" href="<?= pag_url($page + 1) ?>">&#8594;</a>
+    </nav>
+    <?php endif; ?>
+
   <?php endif; ?>
 
   <!-- Form -->

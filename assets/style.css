@@ -103,7 +103,7 @@ body {
 .score-detractor  { background: rgba(180,50,50,.15);  color: #e07070; border: 1.5px solid #7a2d2d; }
 
 .review-name {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--white);
   align-self: end;
@@ -119,7 +119,7 @@ body {
 
 .review-comment {
   grid-column: 2 / 4;
-  font-size: 16px;
+  font-size: 17px;
   color: #aaa;
   line-height: 1.6;
 }
@@ -159,7 +159,7 @@ body {
 }
 
 .nps-question {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: -0.2px;
@@ -247,10 +247,8 @@ body {
 
 label {
   display: block;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: .09em;
-  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--white);
   margin-bottom: 10px;
 }
@@ -264,7 +262,7 @@ textarea {
   border-radius: 12px;
   color: var(--white);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
+  font-size: 18px;
   padding: 14px 18px;
   outline: none;
   transition: border-color .16s, box-shadow .16s;
@@ -299,6 +297,49 @@ textarea:focus {
 }
 
 textarea { height: 110px; line-height: 1.6; }
+
+/* ── Paginação ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  margin-bottom: 44px;
+  flex-wrap: wrap;
+}
+
+.pag-btn {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--gray);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 15px;
+  text-decoration: none;
+  transition: border-color .16s, color .16s;
+  user-select: none;
+}
+
+.pag-btn:hover:not(.disabled):not(.active) {
+  border-color: var(--green-light);
+  color: var(--white);
+}
+
+.pag-btn.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.pag-btn.disabled {
+  opacity: .25;
+  pointer-events: none;
+}
 
 /* ── Sim / Não ── */
 .toggle-row {
@@ -428,7 +469,7 @@ textarea { height: 110px; line-height: 1.6; }
   .review-date    { font-size: 12px; }
   .review-comment { font-size: 14px; }
 
-  label           { font-size: 13px; }
+  label           { font-size: 14px; }
   .field-hint     { font-size: 13px; }
   .field-row      { grid-template-columns: 1fr; }
 
