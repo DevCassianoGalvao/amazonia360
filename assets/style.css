@@ -360,6 +360,13 @@ textarea { height: 110px; line-height: 1.6; }
   font-weight: 600;
   cursor: pointer;
   transition: all .16s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 1;
+  text-align: center;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .toggle-btn:hover { border-color: #444; color: var(--white); }
@@ -379,17 +386,20 @@ textarea { height: 110px; line-height: 1.6; }
 /* Campo "Qual produto?" deslizante */
 .field-slide {
   overflow: hidden;
-  max-height: 0;
+  max-height: 0 !important;
   opacity: 0;
-  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;
+  visibility: hidden;
+  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease, visibility .3s;
   margin-top: 0;
 }
 
 .field-slide.open {
-  max-height: 80px;
+  max-height: 80px !important;
   opacity: 1;
+  visibility: visible;
   margin-top: 12px;
 }
+
 
 /* ── Submit ── */
 .submit-btn {
