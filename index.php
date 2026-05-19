@@ -85,21 +85,43 @@ function format_date(string $dt): string {
   <p class="section-title">Deixe sua avaliação</p>
 
   <div class="form-card">
-    <h1 class="form-title">Em uma escala de 1 a 10, como você avalia o atendimento que recebeu hoje?</h1>
-
     <form id="npsForm" novalidate>
 
+      <!-- NPS Atendimento -->
+      <p class="nps-question">Em uma escala de 1 a 10, como você avalia o atendimento que recebeu hoje?</p>
       <div class="nps-grid" id="npsGrid"></div>
       <div class="nps-hints">
         <span>Muito insatisfeito</span>
         <span>Muito satisfeito</span>
       </div>
 
-      <div class="field">
-        <label for="comentarioInput">Sugestão / Crítica</label>
-        <textarea id="comentarioInput" name="comentario" placeholder="Conta pra gente: faltou algum produto que você procurava ou tem alguma sugestão/crítica para melhorarmos?"></textarea>
+      <!-- NPS Retorno -->
+      <p class="nps-question">O quanto você voltaria a comprar na loja?</p>
+      <div class="nps-grid" id="npsGridRetorno"></div>
+      <div class="nps-hints">
+        <span>Nunca voltaria</span>
+        <span>Com certeza voltaria</span>
       </div>
 
+      <!-- Encontrou o produto -->
+      <div class="field">
+        <label>Encontrou o produto que procurava?</label>
+        <div class="toggle-row">
+          <button type="button" class="toggle-btn toggle-sim" id="btnSim">Sim</button>
+          <button type="button" class="toggle-btn toggle-nao" id="btnNao">Não</button>
+        </div>
+        <div class="field-slide" id="produtoField">
+          <input type="text" id="produtoInput" name="produto_nao_encontrado" placeholder="Qual produto?" maxlength="200" />
+        </div>
+      </div>
+
+      <!-- Sugestão / Crítica -->
+      <div class="field">
+        <label for="comentarioInput">Sugestão / Crítica</label>
+        <textarea id="comentarioInput" name="comentario" placeholder="Tem alguma sugestão ou crítica para melhorarmos?"></textarea>
+      </div>
+
+      <!-- Identificação -->
       <div class="field">
         <p class="field-hint">Esta pesquisa é anônima. Porém, se você teve algum problema e deseja que nossa diretoria entre em contato para resolver, deixe seu nome e telefone.</p>
         <div class="field-row">

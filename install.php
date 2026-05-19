@@ -23,24 +23,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $t = table();
             db()->exec("
                 CREATE TABLE IF NOT EXISTS `$t` (
-                    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    nome        VARCHAR(100)     NOT NULL DEFAULT '',
-                    telefone    VARCHAR(20)      NOT NULL DEFAULT '',
-                    nota        TINYINT UNSIGNED NOT NULL,
-                    comentario  TEXT             NOT NULL DEFAULT '',
-                    criado_em   DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    id                     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    nome                   VARCHAR(100)  NOT NULL DEFAULT '',
+                    telefone               VARCHAR(20)   NOT NULL DEFAULT '',
+                    nota                   TINYINT UNSIGNED NOT NULL,
+                    nota_retorno           TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                    encontrou_produto      VARCHAR(10)   NOT NULL DEFAULT '',
+                    produto_nao_encontrado VARCHAR(200)  NOT NULL DEFAULT '',
+                    comentario             TEXT          NOT NULL DEFAULT '',
+                    criado_em              DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // Adiciona coluna telefone se ainda não existir (compatível com MySQL 5.7)
+            // Migra colunas novas em instalações existentes (MySQL 5.7 compatível)
             $dbName = $_ENV['DB_NAME'] ?? '';
-            $colExists = db()->query("
-                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA = '$dbName' AND TABLE_NAME = '$t' AND COLUMN_NAME = 'telefone'
-            ")->fetchColumn();
+            $newCols = [
+                'telefone'               => "ALTER TABLE `$t` ADD COLUMN telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome",
+                'nota_retorno'           => "ALTER TABLE `$t` ADD COLUMN nota_retorno TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER nota",
+                'encontrou_produto'      => "ALTER TABLE `$t` ADD COLUMN encontrou_produto VARCHAR(10) NOT NULL DEFAULT '' AFTER nota_retorno",
+                'produto_nao_encontrado' => "ALTER TABLE `$t` ADD COLUMN produto_nao_encontrado VARCHAR(200) NOT NULL DEFAULT '' AFTER encontrou_produto",
+            ];
 
-            if (!$colExists) {
-                db()->exec("ALTER TABLE `$t` ADD COLUMN telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome;");
+            foreach ($newCols as $col => $sql) {
+                $exists = db()->query("
+                    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_SCHEMA = '$dbName' AND TABLE_NAME = '$t' AND COLUMN_NAME = '$col'
+                ")->fetchColumn();
+                if (!$exists) db()->exec($sql);
             }
 
             $message = "Tabela `$t` criada/atualizada. Instalação concluída!";

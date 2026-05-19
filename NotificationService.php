@@ -48,18 +48,30 @@ class NotificationService {
     }
 
     private function html(array $r): string {
-        $nota      = (int) $r['nota'];
-        $nome      = htmlspecialchars($r['nome'] !== '' ? $r['nome'] : '');
-        $telefone  = htmlspecialchars($r['telefone'] ?? '');
-        $comentario= nl2br(htmlspecialchars($r['comentario']));
-        $data      = (new DateTime($r['criado_em']))->format('d/m/Y \à\s H\hi');
+        $nota                 = (int) $r['nota'];
+        $notaRetorno          = (int) ($r['nota_retorno'] ?? 0);
+        $nome                 = htmlspecialchars($r['nome'] ?? '');
+        $telefone             = htmlspecialchars($r['telefone'] ?? '');
+        $comentario           = nl2br(htmlspecialchars($r['comentario']));
+        $encontrou            = $r['encontrou_produto'] ?? '';
+        $produtoNaoEncontrado = htmlspecialchars($r['produto_nao_encontrado'] ?? '');
+        $data                 = (new DateTime($r['criado_em']))->format('d/m/Y \à\s H\hi');
 
-        if ($nota >= 9)      { $cor = '#2d7a4f'; $rotulo = 'Promotor'; }
-        elseif ($nota >= 7)  { $cor = '#b8860b'; $rotulo = 'Neutro'; }
-        else                 { $cor = '#922b21'; $rotulo = 'Detrator'; }
+        if ($nota >= 9)     { $cor = '#2d7a4f'; $rotulo = 'Promotor'; }
+        elseif ($nota >= 7) { $cor = '#b8860b'; $rotulo = 'Neutro'; }
+        else                { $cor = '#922b21'; $rotulo = 'Detrator'; }
 
-        $comentarioBlocos = $r['comentario'] !== ''
-            ? "<p style='margin:0 0 8px 0;color:#888;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Sugestão / Crítica</p>
+        $corRetorno = $notaRetorno >= 9 ? '#2d7a4f' : ($notaRetorno >= 7 ? '#b8860b' : '#922b21');
+
+        $encontrouBloco = $encontrou !== ''
+            ? "<tr><td colspan='2' style='padding-bottom:16px;'>
+                <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Encontrou o produto?</p>
+                <p style='margin:0;color:" . ($encontrou === 'sim' ? '#5ecf8a' : '#e07070') . ";font-size:15px;font-weight:600;'>" . ($encontrou === 'sim' ? '✔ Sim' : '✘ Não') . ($encontrou === 'nao' && $produtoNaoEncontrado !== '' ? " — <em style='color:#ccc;font-weight:400;'>$produtoNaoEncontrado</em>" : '') . "</p>
+              </td></tr>"
+            : '';
+
+        $comentarioBloco = $r['comentario'] !== ''
+            ? "<p style='margin:0 0 8px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Sugestão / Crítica</p>
                <p style='margin:0;color:#ccc;font-size:15px;line-height:1.7;'>\"{$comentario}\"</p>"
             : '';
 
@@ -93,17 +105,33 @@ class NotificationService {
                   </td>
                 </tr>
 
-                <!-- Score -->
+                <!-- Scores -->
                 <tr>
                   <td style='padding:32px 36px 0;'>
-                    <table cellpadding='0' cellspacing='0'>
+                    <table cellpadding='0' cellspacing='0' width='100%'>
                       <tr>
-                        <td style='background:{$cor};border-radius:12px;width:64px;height:64px;text-align:center;vertical-align:middle;'>
-                          <span style='color:#fff;font-size:28px;font-weight:700;'>{$nota}</span>
+                        <td style='padding-right:24px;'>
+                          <p style='margin:0 0 8px;color:#888;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'>Atendimento</p>
+                          <table cellpadding='0' cellspacing='0'>
+                            <tr>
+                              <td style='background:{$cor};border-radius:10px;width:52px;height:52px;text-align:center;vertical-align:middle;'>
+                                <span style='color:#fff;font-size:24px;font-weight:700;'>{$nota}</span>
+                              </td>
+                              <td style='padding-left:12px;'>
+                                <p style='margin:0;color:{$cor};font-size:16px;font-weight:700;'>{$rotulo}</p>
+                              </td>
+                            </tr>
+                          </table>
                         </td>
-                        <td style='padding-left:20px;'>
-                          <p style='margin:0;color:#888;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'>Classificação</p>
-                          <p style='margin:4px 0 0;color:{$cor};font-size:20px;font-weight:700;'>{$rotulo}</p>
+                        <td>
+                          <p style='margin:0 0 8px;color:#888;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'>Voltaria a comprar</p>
+                          <table cellpadding='0' cellspacing='0'>
+                            <tr>
+                              <td style='background:{$corRetorno};border-radius:10px;width:52px;height:52px;text-align:center;vertical-align:middle;'>
+                                <span style='color:#fff;font-size:24px;font-weight:700;'>{$notaRetorno}</span>
+                              </td>
+                            </tr>
+                          </table>
                         </td>
                       </tr>
                     </table>
@@ -114,6 +142,7 @@ class NotificationService {
                 <tr>
                   <td style='padding:24px 36px;'>
                     <table width='100%' cellpadding='0' cellspacing='0' style='border-top:1px solid #222;padding-top:24px;'>
+                      {$encontrouBloco}
                       {$contatoBlocos}
                       <tr>
                         <td colspan='2' style='padding-bottom:16px;text-align:right;'>
@@ -122,7 +151,7 @@ class NotificationService {
                         </td>
                       </tr>
                     </table>
-                    " . ($comentarioBlocos ? "<div style='border-top:1px solid #222;padding-top:20px;'>{$comentarioBlocos}</div>" : '') . "
+                    " . ($comentarioBloco ? "<div style='border-top:1px solid #222;padding-top:20px;'>{$comentarioBloco}</div>" : '') . "
                   </td>
                 </tr>
 
@@ -141,23 +170,36 @@ class NotificationService {
     }
 
     private function text(array $r): string {
-        $nota     = (int) $r['nota'];
-        $nome     = $r['nome']     !== '' ? $r['nome']     : 'Não informado';
-        $telefone = ($r['telefone'] ?? '') !== '' ? $r['telefone'] : 'Não informado';
-        $data     = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
-        $linhas   = [
+        $nota        = (int) $r['nota'];
+        $notaRetorno = (int) ($r['nota_retorno'] ?? 0);
+        $nome        = ($r['nome'] ?? '')     !== '' ? $r['nome']     : 'Não informado';
+        $telefone    = ($r['telefone'] ?? '') !== '' ? $r['telefone'] : 'Não informado';
+        $encontrou   = $r['encontrou_produto'] ?? '';
+        $data        = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
+
+        $linhas = [
             "Nova avaliação NPS — Amazônia 360",
             "---",
-            "Nota: $nota/10",
+            "Atendimento: $nota/10",
+            "Voltaria a comprar: $notaRetorno/10",
             "Nome: $nome",
             "Telefone: $telefone",
             "Data: $data",
         ];
-        if ($r['comentario'] !== '') {
+
+        if ($encontrou !== '') {
+            $linhas[] = "Encontrou o produto: " . ($encontrou === 'sim' ? 'Sim' : 'Não');
+            if ($encontrou === 'nao' && ($r['produto_nao_encontrado'] ?? '') !== '') {
+                $linhas[] = "Produto buscado: " . $r['produto_nao_encontrado'];
+            }
+        }
+
+        if (($r['comentario'] ?? '') !== '') {
             $linhas[] = "---";
             $linhas[] = "Sugestão/Crítica:";
             $linhas[] = $r['comentario'];
         }
+
         return implode("\n", $linhas);
     }
 }

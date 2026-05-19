@@ -158,6 +158,15 @@ body {
   line-height: 1.5;
 }
 
+.nps-question {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
 /* ── NPS ── */
 .nps-label {
   font-size: 15px;
@@ -290,6 +299,56 @@ textarea:focus {
 }
 
 textarea { height: 110px; line-height: 1.6; }
+
+/* ── Sim / Não ── */
+.toggle-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 13px;
+  border: 1.5px solid #272727;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--gray);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .16s ease;
+}
+
+.toggle-btn:hover { border-color: #444; color: var(--white); }
+
+.toggle-btn.selected.toggle-sim {
+  background: rgba(45,122,79,.2);
+  border-color: var(--green-light);
+  color: #5ecf8a;
+}
+
+.toggle-btn.selected.toggle-nao {
+  background: rgba(180,50,50,.2);
+  border-color: #c0392b;
+  color: #e07070;
+}
+
+/* Campo "Qual produto?" deslizante */
+.field-slide {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;
+  margin-top: 0;
+}
+
+.field-slide.open {
+  max-height: 80px;
+  opacity: 1;
+  margin-top: 12px;
+}
 
 /* ── Submit ── */
 .submit-btn {
