@@ -123,12 +123,19 @@ function pag_url(int $p): string {
         <span>Muito satisfeito</span>
       </div>
 
-      <!-- NPS Retorno -->
-      <p class="nps-question">O quanto você voltaria a comprar na loja?</p>
-      <div class="nps-grid" id="npsGridRetorno"></div>
-      <div class="nps-hints">
-        <span>Nunca voltaria</span>
-        <span>Com certeza voltaria</span>
+      <!-- Voltaria a comprar -->
+      <div class="field">
+        <label>Voltaria a comprar na loja?</label>
+        <div class="toggle-row">
+          <button type="button" class="toggle-btn toggle-sim" id="btnVoltariaSim">Sim</button>
+          <button type="button" class="toggle-btn toggle-nao" id="btnVoltariaNao">Não</button>
+        </div>
+      </div>
+
+      <!-- Atendente -->
+      <div class="field">
+        <label for="atendenteInput">Nome do atendente</label>
+        <input type="text" id="atendenteInput" name="atendente" placeholder="Quem te atendeu?" maxlength="100" />
       </div>
 
       <!-- Encontrou o produto -->

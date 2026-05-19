@@ -49,7 +49,8 @@ class NotificationService {
 
     private function html(array $r): string {
         $nota                 = (int) $r['nota'];
-        $notaRetorno          = (int) ($r['nota_retorno'] ?? 0);
+        $voltariaComprar      = $r['voltaria_comprar'] ?? '';
+        $atendente            = htmlspecialchars($r['atendente'] ?? '');
         $nome                 = htmlspecialchars($r['nome'] ?? '');
         $telefone             = htmlspecialchars($r['telefone'] ?? '');
         $comentario           = nl2br(htmlspecialchars($r['comentario']));
@@ -61,7 +62,15 @@ class NotificationService {
         elseif ($nota >= 7) { $cor = '#b8860b'; $rotulo = 'Neutro'; }
         else                { $cor = '#922b21'; $rotulo = 'Detrator'; }
 
-        $corRetorno = $notaRetorno >= 9 ? '#2d7a4f' : ($notaRetorno >= 7 ? '#b8860b' : '#922b21');
+        $corVoltaria  = $voltariaComprar === 'sim' ? '#2d7a4f' : '#922b21';
+        $labelVoltaria = $voltariaComprar === 'sim' ? '✔ Sim' : ($voltariaComprar === 'nao' ? '✘ Não' : '—');
+
+        $atendenteBloco = $atendente !== ''
+            ? "<tr><td colspan='2' style='padding-bottom:16px;'>
+                <p style='margin:0 0 4px 0;color:#888;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;'>Atendente</p>
+                <p style='margin:0;color:#f5f5f0;font-size:15px;font-weight:600;'>$atendente</p>
+              </td></tr>"
+            : '';
 
         $encontrouBloco = $encontrou !== ''
             ? "<tr><td colspan='2' style='padding-bottom:16px;'>
@@ -125,13 +134,7 @@ class NotificationService {
                         </td>
                         <td>
                           <p style='margin:0 0 8px;color:#888;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'>Voltaria a comprar</p>
-                          <table cellpadding='0' cellspacing='0'>
-                            <tr>
-                              <td style='background:{$corRetorno};border-radius:10px;width:52px;height:52px;text-align:center;vertical-align:middle;'>
-                                <span style='color:#fff;font-size:24px;font-weight:700;'>{$notaRetorno}</span>
-                              </td>
-                            </tr>
-                          </table>
+                          <p style='margin:0;color:{$corVoltaria};font-size:18px;font-weight:700;'>{$labelVoltaria}</p>
                         </td>
                       </tr>
                     </table>
@@ -142,6 +145,7 @@ class NotificationService {
                 <tr>
                   <td style='padding:24px 36px;'>
                     <table width='100%' cellpadding='0' cellspacing='0' style='border-top:1px solid #222;padding-top:24px;'>
+                      {$atendenteBloco}
                       {$encontrouBloco}
                       {$contatoBlocos}
                       <tr>
@@ -170,22 +174,32 @@ class NotificationService {
     }
 
     private function text(array $r): string {
-        $nota        = (int) $r['nota'];
-        $notaRetorno = (int) ($r['nota_retorno'] ?? 0);
-        $nome        = ($r['nome'] ?? '')     !== '' ? $r['nome']     : 'Não informado';
-        $telefone    = ($r['telefone'] ?? '') !== '' ? $r['telefone'] : 'Não informado';
-        $encontrou   = $r['encontrou_produto'] ?? '';
-        $data        = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
+        $nota           = (int) $r['nota'];
+        $voltariaComprar = $r['voltaria_comprar'] ?? '';
+        $atendente      = ($r['atendente'] ?? '') !== '' ? $r['atendente'] : '';
+        $nome           = ($r['nome'] ?? '')     !== '' ? $r['nome']     : 'Não informado';
+        $telefone       = ($r['telefone'] ?? '') !== '' ? $r['telefone'] : 'Não informado';
+        $encontrou      = $r['encontrou_produto'] ?? '';
+        $data           = (new DateTime($r['criado_em']))->format('d/m/Y H:i');
+
+        $labelVoltaria = $voltariaComprar === 'sim' ? 'Sim' : ($voltariaComprar === 'nao' ? 'Não' : '—');
 
         $linhas = [
             "Nova avaliação NPS — Amazônia 360",
             "---",
             "Atendimento: $nota/10",
-            "Voltaria a comprar: $notaRetorno/10",
+            "Voltaria a comprar: $labelVoltaria",
+        ];
+
+        if ($atendente !== '') {
+            $linhas[] = "Atendente: $atendente";
+        }
+
+        $linhas = array_merge($linhas, [
             "Nome: $nome",
             "Telefone: $telefone",
             "Data: $data",
-        ];
+        ]);
 
         if ($encontrou !== '') {
             $linhas[] = "Encontrou o produto: " . ($encontrou === 'sim' ? 'Sim' : 'Não');

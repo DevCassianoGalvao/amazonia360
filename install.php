@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     nome                   VARCHAR(100)  NOT NULL DEFAULT '',
                     telefone               VARCHAR(20)   NOT NULL DEFAULT '',
                     nota                   TINYINT UNSIGNED NOT NULL,
-                    nota_retorno           TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                    voltaria_comprar       VARCHAR(10)   NOT NULL DEFAULT '',
+                    atendente              VARCHAR(100)  NOT NULL DEFAULT '',
                     encontrou_produto      VARCHAR(10)   NOT NULL DEFAULT '',
                     produto_nao_encontrado VARCHAR(200)  NOT NULL DEFAULT '',
                     comentario             TEXT          NOT NULL DEFAULT '',
@@ -39,8 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dbName = $_ENV['DB_NAME'] ?? '';
             $newCols = [
                 'telefone'               => "ALTER TABLE `$t` ADD COLUMN telefone VARCHAR(20) NOT NULL DEFAULT '' AFTER nome",
-                'nota_retorno'           => "ALTER TABLE `$t` ADD COLUMN nota_retorno TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER nota",
-                'encontrou_produto'      => "ALTER TABLE `$t` ADD COLUMN encontrou_produto VARCHAR(10) NOT NULL DEFAULT '' AFTER nota_retorno",
+                'voltaria_comprar'       => "ALTER TABLE `$t` ADD COLUMN voltaria_comprar VARCHAR(10) NOT NULL DEFAULT '' AFTER nota",
+                'atendente'              => "ALTER TABLE `$t` ADD COLUMN atendente VARCHAR(100) NOT NULL DEFAULT '' AFTER voltaria_comprar",
+                'encontrou_produto'      => "ALTER TABLE `$t` ADD COLUMN encontrou_produto VARCHAR(10) NOT NULL DEFAULT '' AFTER atendente",
                 'produto_nao_encontrado' => "ALTER TABLE `$t` ADD COLUMN produto_nao_encontrado VARCHAR(200) NOT NULL DEFAULT '' AFTER encontrou_produto",
             ];
 

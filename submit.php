@@ -12,15 +12,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $nome                 = trim($_POST['nome']                   ?? '');
 $telefone             = trim($_POST['telefone']               ?? '');
 $nota                 = intval($_POST['nota']                 ?? -1);
-$notaRetorno          = intval($_POST['nota_retorno']         ?? -1);
+$voltariaComprar      = trim($_POST['voltaria_comprar']       ?? '');
+$atendente            = trim($_POST['atendente']              ?? '');
 $comentario           = trim($_POST['comentario']             ?? '');
 $encontrouProduto     = trim($_POST['encontrou_produto']      ?? '');
 $produtoNaoEncontrado = trim($_POST['produto_nao_encontrado'] ?? '');
 
-if ($nota < 1 || $nota > 10 || $notaRetorno < 1 || $notaRetorno > 10) {
+if ($nota < 1 || $nota > 10) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'Nota inválida.']);
     exit;
+}
+
+if (!in_array($voltariaComprar, ['sim', 'nao', ''], true)) {
+    $voltariaComprar = '';
 }
 
 if (!in_array($encontrouProduto, ['sim', 'nao', ''], true)) {
@@ -30,17 +35,18 @@ if (!in_array($encontrouProduto, ['sim', 'nao', ''], true)) {
 try {
     $t = table();
     $stmt = db()->prepare("
-        INSERT INTO `$t` (nome, telefone, nota, nota_retorno, encontrou_produto, produto_nao_encontrado, comentario)
-        VALUES (:nome, :telefone, :nota, :nota_retorno, :encontrou_produto, :produto_nao_encontrado, :comentario)
+        INSERT INTO `$t` (nome, telefone, nota, voltaria_comprar, atendente, encontrou_produto, produto_nao_encontrado, comentario)
+        VALUES (:nome, :telefone, :nota, :voltaria_comprar, :atendente, :encontrou_produto, :produto_nao_encontrado, :comentario)
     ");
     $stmt->execute([
-        ':nome'                  => mb_substr($nome, 0, 100),
-        ':telefone'              => mb_substr($telefone, 0, 20),
-        ':nota'                  => $nota,
-        ':nota_retorno'          => $notaRetorno,
-        ':encontrou_produto'     => $encontrouProduto,
-        ':produto_nao_encontrado'=> mb_substr($produtoNaoEncontrado, 0, 200),
-        ':comentario'            => mb_substr($comentario, 0, 2000),
+        ':nome'                   => mb_substr($nome, 0, 100),
+        ':telefone'               => mb_substr($telefone, 0, 20),
+        ':nota'                   => $nota,
+        ':voltaria_comprar'        => $voltariaComprar,
+        ':atendente'              => mb_substr($atendente, 0, 100),
+        ':encontrou_produto'      => $encontrouProduto,
+        ':produto_nao_encontrado' => mb_substr($produtoNaoEncontrado, 0, 200),
+        ':comentario'             => mb_substr($comentario, 0, 2000),
     ]);
 
     $id     = db()->lastInsertId();

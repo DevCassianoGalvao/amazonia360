@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const form       = document.getElementById('npsForm');
 
   let scoreAtendimento = null;
-  let scoreRetorno     = null;
+  let voltariaComprar  = null;
   let encontrouProduto = null;
 
   function checkSubmit() {
-    submitBtn.disabled = (scoreAtendimento === null || scoreRetorno === null);
+    submitBtn.disabled = (scoreAtendimento === null || voltariaComprar === null);
   }
 
   function buildNpsGrid(containerId, onSelect) {
@@ -29,8 +29,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  buildNpsGrid('npsGrid',        (v) => { scoreAtendimento = v; });
-  buildNpsGrid('npsGridRetorno', (v) => { scoreRetorno     = v; });
+  buildNpsGrid('npsGrid', (v) => { scoreAtendimento = v; });
+
+  // Voltaria a comprar — Sim / Não
+  const btnVoltariaSim = document.getElementById('btnVoltariaSim');
+  const btnVoltariaNao = document.getElementById('btnVoltariaNao');
+
+  btnVoltariaSim.addEventListener('click', () => {
+    voltariaComprar = 'sim';
+    btnVoltariaSim.classList.add('selected');
+    btnVoltariaNao.classList.remove('selected');
+    checkSubmit();
+  });
+
+  btnVoltariaNao.addEventListener('click', () => {
+    voltariaComprar = 'nao';
+    btnVoltariaNao.classList.add('selected');
+    btnVoltariaSim.classList.remove('selected');
+    checkSubmit();
+  });
 
   // Phone mask
   const telefoneInput = document.getElementById('telefoneInput');
@@ -45,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Sim / Não
-  const btnSim      = document.getElementById('btnSim');
-  const btnNao      = document.getElementById('btnNao');
-  const produtoField= document.getElementById('produtoField');
+  // Encontrou o produto — Sim / Não
+  const btnSim       = document.getElementById('btnSim');
+  const btnNao       = document.getElementById('btnNao');
+  const produtoField = document.getElementById('produtoField');
 
   btnSim.addEventListener('click', () => {
     encontrouProduto = 'sim';
@@ -70,8 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     feedback.className = 'form-feedback';
 
-    if (scoreAtendimento === null || scoreRetorno === null) return;
+    if (scoreAtendimento === null || voltariaComprar === null) return;
 
+    const atendente           = document.getElementById('atendenteInput').value.trim();
     const nome                = document.getElementById('nomeInput').value.trim();
     const telefone            = document.getElementById('telefoneInput').value.trim();
     const comentario          = document.getElementById('comentarioInput').value.trim();
@@ -81,13 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Enviando…';
 
     const body = new FormData();
-    body.append('nota',                  scoreAtendimento);
-    body.append('nota_retorno',          scoreRetorno);
-    body.append('encontrou_produto',     encontrouProduto ?? '');
-    body.append('produto_nao_encontrado',produtoNaoEncontrado);
-    body.append('nome',                  nome);
-    body.append('telefone',              telefone);
-    body.append('comentario',            comentario);
+    body.append('nota',                   scoreAtendimento);
+    body.append('voltaria_comprar',        voltariaComprar);
+    body.append('atendente',              atendente);
+    body.append('encontrou_produto',      encontrouProduto ?? '');
+    body.append('produto_nao_encontrado', produtoNaoEncontrado);
+    body.append('nome',                   nome);
+    body.append('telefone',               telefone);
+    body.append('comentario',             comentario);
 
     try {
       const res  = await fetch('submit.php', { method: 'POST', body });
@@ -98,11 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
         feedback.classList.add('ok');
         form.reset();
         document.querySelectorAll('.nps-btn').forEach(b => b.classList.remove('selected'));
+        btnVoltariaSim.classList.remove('selected');
+        btnVoltariaNao.classList.remove('selected');
         btnSim.classList.remove('selected');
         btnNao.classList.remove('selected');
         produtoField.classList.remove('open');
         scoreAtendimento = null;
-        scoreRetorno     = null;
+        voltariaComprar  = null;
         encontrouProduto = null;
         submitBtn.disabled = true;
         setTimeout(() => location.reload(), 1800);
